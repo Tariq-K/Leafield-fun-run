@@ -1,0 +1,674 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Leafield Fun Run 2026 — Registration</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&family=Nunito+Sans:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --blue: #2563B0;
+    --blue-light: #EBF3FF;
+    --blue-mid: #4A90D9;
+    --blue-dark: #1A3F73;
+    --accent: #F97316;
+    --accent-light: #FFF4ED;
+    --green: #16a34a;
+    --green-light: #f0fdf4;
+    --red: #dc2626;
+    --red-light: #fef2f2;
+    --gray-50: #f9fafb;
+    --gray-100: #f3f4f6;
+    --gray-200: #e5e7eb;
+    --gray-400: #9ca3af;
+    --gray-600: #4b5563;
+    --gray-800: #1f2937;
+    --radius: 12px;
+    --radius-sm: 8px;
+    --shadow: 0 1px 3px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.04);
+    --shadow-md: 0 4px 12px rgba(0,0,0,0.08);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Nunito Sans', sans-serif;
+    background: #f0f5ff;
+    color: var(--gray-800);
+    min-height: 100vh;
+    padding-bottom: 3rem;
+  }
+
+  /* HEADER */
+  .page-header {
+    background: var(--blue-dark);
+    padding: 2rem 1rem 3.5rem;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .page-header::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at 30% 50%, rgba(74,144,217,0.3) 0%, transparent 60%),
+                radial-gradient(ellipse at 80% 20%, rgba(37,99,176,0.4) 0%, transparent 50%);
+  }
+  .header-inner { position: relative; z-index: 1; }
+  .logo-wrap {
+    width: 90px; height: 90px;
+    background: white;
+    border-radius: 18px;
+    margin: 0 auto 1rem;
+    display: flex; align-items: center; justify-content: center;
+    overflow: hidden;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+  }
+  .logo-wrap img { width: 84px; height: 84px; object-fit: contain; }
+  .page-header h1 {
+    font-family: 'Nunito', sans-serif;
+    font-size: 2rem;
+    font-weight: 800;
+    color: white;
+    margin-bottom: 0.25rem;
+  }
+  .page-header p {
+    color: #93c5fd;
+    font-size: 0.9rem;
+  }
+  .weather-banner {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(249,115,22,0.15);
+    border: 1px solid rgba(249,115,22,0.4);
+    color: #fed7aa;
+    font-size: 0.78rem;
+    font-weight: 600;
+    padding: 5px 12px;
+    border-radius: 20px;
+    margin-top: 0.75rem;
+  }
+
+  /* FORM CONTAINER */
+  .form-outer {
+    max-width: 620px;
+    margin: -1.5rem auto 0;
+    padding: 0 1rem;
+    position: relative;
+    z-index: 2;
+  }
+
+  /* SECTIONS */
+  .card {
+    background: white;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-md);
+    padding: 1.5rem;
+    margin-bottom: 1rem;
+  }
+  .section-title {
+    font-family: 'Nunito', sans-serif;
+    font-size: 0.7rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--blue);
+    margin-bottom: 1.1rem;
+    padding-bottom: 0.6rem;
+    border-bottom: 2px solid var(--blue-light);
+  }
+
+  /* FIELDS */
+  .field { margin-bottom: 0.9rem; }
+  .field:last-child { margin-bottom: 0; }
+  .field label {
+    display: block;
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--gray-600);
+    margin-bottom: 4px;
+  }
+  .req { color: var(--accent); }
+  input[type=text],
+  input[type=email],
+  input[type=tel],
+  input[type=date],
+  select {
+    width: 100%;
+    padding: 9px 12px;
+    border: 1.5px solid var(--gray-200);
+    border-radius: var(--radius-sm);
+    font-size: 0.9rem;
+    font-family: 'Nunito Sans', sans-serif;
+    color: var(--gray-800);
+    background: white;
+    transition: border-color 0.15s, box-shadow 0.15s;
+    appearance: none;
+    -webkit-appearance: none;
+  }
+  input:focus, select:focus {
+    outline: none;
+    border-color: var(--blue-mid);
+    box-shadow: 0 0 0 3px rgba(37,99,176,0.1);
+  }
+  .hint { font-size: 0.75rem; color: var(--gray-400); margin-top: 3px; }
+  .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .row3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
+  @media (max-width: 480px) {
+    .row2, .row3 { grid-template-columns: 1fr; }
+  }
+
+  /* RADIO / CHECKBOX */
+  .radio-group, .check-group { display: flex; flex-direction: column; gap: 7px; }
+  .radio-item, .check-item {
+    display: flex; align-items: center; gap: 9px;
+    font-size: 0.88rem; color: var(--gray-800);
+    cursor: pointer;
+    padding: 8px 10px;
+    border-radius: var(--radius-sm);
+    border: 1.5px solid var(--gray-200);
+    transition: border-color 0.12s, background 0.12s;
+    user-select: none;
+  }
+  .radio-item:hover, .check-item:hover { border-color: var(--blue-mid); background: var(--blue-light); }
+  .radio-item input, .check-item input { accent-color: var(--blue); width: 16px; height: 16px; }
+  .inline-checks { flex-direction: row; flex-wrap: wrap; }
+  .inline-checks .check-item { flex: 0 0 auto; }
+
+  /* PARTICIPANT CARDS */
+  .participant-card {
+    border: 1.5px solid var(--gray-200);
+    border-radius: var(--radius-sm);
+    padding: 1rem;
+    margin-bottom: 0.75rem;
+    background: var(--gray-50);
+  }
+  .p-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.9rem;
+  }
+  .p-num {
+    font-family: 'Nunito', sans-serif;
+    font-size: 0.82rem;
+    font-weight: 800;
+    color: var(--blue);
+    background: var(--blue-light);
+    padding: 3px 10px;
+    border-radius: 20px;
+  }
+  .remove-btn {
+    font-size: 0.75rem;
+    color: var(--red);
+    background: var(--red-light);
+    border: none;
+    border-radius: 6px;
+    padding: 4px 10px;
+    cursor: pointer;
+    font-family: 'Nunito Sans', sans-serif;
+    font-weight: 600;
+  }
+  .remove-btn:hover { background: #fecaca; }
+  .add-participant-btn {
+    width: 100%;
+    padding: 10px;
+    border: 2px dashed var(--blue-mid);
+    border-radius: var(--radius-sm);
+    background: var(--blue-light);
+    color: var(--blue);
+    font-size: 0.88rem;
+    font-weight: 700;
+    font-family: 'Nunito', sans-serif;
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+  .add-participant-btn:hover { background: #d6e8ff; }
+
+  /* T-SHIRT SECTION */
+  .tshirt-order-row {
+    border: 1.5px solid var(--gray-200);
+    border-radius: var(--radius-sm);
+    padding: 0.85rem;
+    margin-bottom: 0.6rem;
+    background: var(--gray-50);
+    display: grid;
+    grid-template-columns: 2fr 1.2fr 1.2fr auto;
+    gap: 8px;
+    align-items: end;
+  }
+  @media (max-width: 500px) {
+    .tshirt-order-row { grid-template-columns: 1fr 1fr; }
+  }
+  .tshirt-price-note {
+    font-size: 0.8rem;
+    color: var(--gray-600);
+    background: var(--blue-light);
+    padding: 8px 12px;
+    border-radius: var(--radius-sm);
+    margin-bottom: 0.75rem;
+    line-height: 1.5;
+  }
+
+  /* WAIVER */
+  .waiver-text {
+    font-size: 0.8rem;
+    color: var(--gray-600);
+    background: var(--gray-50);
+    border: 1.5px solid var(--gray-200);
+    border-radius: var(--radius-sm);
+    padding: 10px 12px;
+    line-height: 1.6;
+    margin-bottom: 0.75rem;
+  }
+
+  /* SUMMARY */
+  .summary-bar {
+    background: var(--blue-light);
+    border: 1.5px solid #bfdbfe;
+    border-radius: var(--radius-sm);
+    padding: 10px 14px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+    font-size: 0.85rem;
+  }
+  .summary-bar span { color: var(--gray-600); }
+  .summary-bar strong { color: var(--blue-dark); font-size: 1rem; }
+
+  /* SUBMIT */
+  .submit-btn {
+    width: 100%;
+    padding: 14px;
+    background: var(--blue);
+    border: none;
+    border-radius: var(--radius);
+    font-size: 1rem;
+    font-weight: 800;
+    font-family: 'Nunito', sans-serif;
+    color: white;
+    cursor: pointer;
+    transition: background 0.15s, transform 0.1s;
+    letter-spacing: 0.02em;
+  }
+  .submit-btn:hover { background: var(--blue-dark); }
+  .submit-btn:active { transform: scale(0.99); }
+  .submit-btn:disabled { background: var(--gray-400); cursor: not-allowed; }
+
+  /* SUCCESS STATE */
+  .success-screen {
+    display: none;
+    text-align: center;
+    padding: 3rem 1.5rem;
+  }
+  .success-icon {
+    width: 64px; height: 64px;
+    background: var(--green-light);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 1.25rem;
+    font-size: 28px;
+  }
+  .success-screen h2 {
+    font-family: 'Nunito', sans-serif;
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: var(--green);
+    margin-bottom: 0.5rem;
+  }
+  .success-screen p { font-size: 0.9rem; color: var(--gray-600); line-height: 1.6; }
+
+  /* ERROR */
+  .error-msg {
+    display: none;
+    background: var(--red-light);
+    border: 1px solid #fecaca;
+    color: var(--red);
+    font-size: 0.82rem;
+    padding: 10px 12px;
+    border-radius: var(--radius-sm);
+    margin-bottom: 1rem;
+  }
+
+  /* SPINNER */
+  .spinner {
+    display: none;
+    width: 18px; height: 18px;
+    border: 2px solid rgba(255,255,255,0.4);
+    border-top-color: white;
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+    margin: 0 auto;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+</style>
+</head>
+<body>
+
+<div class="page-header">
+  <div class="header-inner">
+    <div class="logo-wrap">
+      <img src="logo.jpeg" alt="Leafield Fun Run logo">
+    </div>
+    <h1>Leafield Fun Run 2026</h1>
+    <p>Register your group — 1km · 5km · 10km</p>
+    <div class="weather-banner">&#9888; Weather dependent — may be postponed to spring</div>
+  </div>
+</div>
+
+<div class="form-outer">
+
+  <div id="form-wrap">
+
+    <!-- LEAD CONTACT -->
+    <div class="card">
+      <div class="section-title">Your contact details</div>
+      <div class="row2">
+        <div class="field">
+          <label>Full name <span class="req">*</span></label>
+          <input type="text" id="lead-name" placeholder="Jane Smith" required>
+        </div>
+        <div class="field">
+          <label>Email address <span class="req">*</span></label>
+          <input type="email" id="lead-email" placeholder="jane@example.com" required>
+          <p class="hint">Confirmation will be sent here</p>
+        </div>
+      </div>
+      <div class="field">
+        <label>Phone number</label>
+        <input type="tel" id="lead-phone" placeholder="+44 7700 000000">
+      </div>
+    </div>
+
+    <!-- PARTICIPANTS -->
+    <div class="card">
+      <div class="section-title">Participants</div>
+      <div id="participants-list"></div>
+      <button type="button" class="add-participant-btn" onclick="addParticipant()">+ Add another participant</button>
+    </div>
+
+    <!-- T-SHIRTS -->
+    <div class="card">
+      <div class="section-title">T-shirt orders (optional)</div>
+      <div class="tshirt-price-note">
+        &#128248; Adults £12 &nbsp;·&nbsp; Kids £8 &nbsp;·&nbsp; Sizes: XS S M L XL XXL &nbsp;·&nbsp; Kids: 3–4 / 5–6 / 7–8 / 9–10 / 11–12<br>
+        Each t-shirt features the Leafield Fun Run 2026 logo. Discounted for participants.
+      </div>
+      <div id="tshirt-list"></div>
+      <button type="button" class="add-participant-btn" style="border-color:#f97316;color:#c2410c;background:#fff7ed" onclick="addShirt()">+ Add a t-shirt</button>
+    </div>
+
+    <!-- HOW DID YOU HEAR -->
+    <div class="card">
+      <div class="section-title">How did you hear about us?</div>
+      <div class="check-group inline-checks" id="source-checks">
+        <label class="check-item"><input type="checkbox" value="Social media"> Social media</label>
+        <label class="check-item"><input type="checkbox" value="Poster/flyer"> Poster / flyer</label>
+        <label class="check-item"><input type="checkbox" value="Friend or family"> Friend or family</label>
+        <label class="check-item"><input type="checkbox" value="Witney Gazette"> Witney Gazette</label>
+        <label class="check-item"><input type="checkbox" value="School/nursery"> School / nursery</label>
+      </div>
+    </div>
+
+    <!-- WAIVER -->
+    <div class="card">
+      <div class="section-title">Waiver &amp; declaration</div>
+      <div class="waiver-text">
+        This event is weather dependent and may be postponed to spring. Buggies and pushchairs are permitted on the 1km route only (paved/gravel surface). All participants take part at their own risk. By submitting this form, you confirm that all participants listed are fit to take part and agree to the event terms and conditions.
+      </div>
+      <label class="check-item" id="waiver-check-label">
+        <input type="checkbox" id="waiver-check">
+        I confirm all participants have read and agreed to the above <span class="req">*</span>
+      </label>
+    </div>
+
+    <!-- SUMMARY + SUBMIT -->
+    <div class="summary-bar">
+      <span>Participants: <strong id="p-count">0</strong> &nbsp;|&nbsp; T-shirts: <strong id="t-count">0</strong></span>
+      <span>Est. shirts total: <strong id="shirt-total">£0</strong></span>
+    </div>
+
+    <div class="error-msg" id="error-msg">Something went wrong — please try again or email us directly.</div>
+
+    <button type="button" class="submit-btn" id="submit-btn" onclick="submitForm()">
+      <span id="btn-text">Submit registration</span>
+      <div class="spinner" id="spinner"></div>
+    </button>
+
+    <p style="text-align:center;font-size:0.75rem;color:var(--gray-400);margin-top:1rem;">
+      Questions? Email <a href="mailto:leafieldfunrun@gmail.com" style="color:var(--blue)">leafieldfunrun@gmail.com</a>
+    </p>
+
+  </div><!-- end form-wrap -->
+
+  <!-- SUCCESS -->
+  <div class="card success-screen" id="success-screen">
+    <div class="success-icon">&#10003;</div>
+    <h2>You're registered!</h2>
+    <p>Thanks for signing up for the Leafield Fun Run 2026.<br>
+    We'll be in touch with event details closer to the date.<br><br>
+    <em>See you on the start line!</em></p>
+  </div>
+
+</div><!-- end form-outer -->
+
+<script>
+// ========================================================
+// CONFIGURATION — replace this URL after deploying Apps Script
+// ========================================================
+const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw7shCV4gDUL8kbFqi5DvyABq3l8nTPvjrX9741x1fysNy59nfkBR9uNe6AMECEXQfN/exec';
+// ========================================================
+
+let pCount = 0;
+let tCount = 0;
+
+function participantHTML(n, isFirst) {
+  const removeBtn = isFirst ? '' : `<button type="button" class="remove-btn" onclick="removeParticipant(this)">Remove</button>`;
+  return `
+  <div class="participant-card" data-p="${n}">
+    <div class="p-header">
+      <span class="p-num">Participant ${n}${isFirst ? ' (you)' : ''}</span>
+      ${removeBtn}
+    </div>
+    <div class="row2">
+      <div class="field">
+        <label>Full name <span class="req">*</span></label>
+        <input type="text" placeholder="Full name" class="p-name" required>
+      </div>
+      <div class="field">
+        <label>Date of birth</label>
+        <input type="date" class="p-dob">
+      </div>
+    </div>
+    <div class="row2">
+      <div class="field">
+        <label>Race distance <span class="req">*</span></label>
+        <select class="p-distance">
+          <option value="">Select distance...</option>
+          <option>1km fun run</option>
+          <option>5km</option>
+          <option>10km</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Category</label>
+        <select class="p-category">
+          <option>Adult (18+)</option>
+          <option>Child (under 16)</option>
+          <option>Young person (16–17)</option>
+        </select>
+      </div>
+    </div>
+    <div class="row2">
+      <div class="field">
+        <label>Emergency contact name <span class="req">*</span></label>
+        <input type="text" placeholder="Contact name" class="p-ec-name" required>
+      </div>
+      <div class="field">
+        <label>Emergency contact phone <span class="req">*</span></label>
+        <input type="tel" placeholder="+44 7700 000000" class="p-ec-phone" required>
+      </div>
+    </div>
+  </div>`;
+}
+
+function shirtHTML(n) {
+  return `
+  <div class="tshirt-order-row" id="shirt-${n}">
+    <div class="field" style="margin:0">
+      <label style="font-size:0.78rem">For (name)</label>
+      <input type="text" placeholder="Participant name" class="s-name">
+    </div>
+    <div class="field" style="margin:0">
+      <label style="font-size:0.78rem">Size</label>
+      <select class="s-size">
+        <option>XS</option><option>S</option><option selected>M</option>
+        <option>L</option><option>XL</option><option>XXL</option>
+        <option>Kids 3–4</option><option>Kids 5–6</option>
+        <option>Kids 7–8</option><option>Kids 9–10</option><option>Kids 11–12</option>
+      </select>
+    </div>
+    <div class="field" style="margin:0">
+      <label style="font-size:0.78rem">Fit</label>
+      <select class="s-fit">
+        <option>Unisex</option>
+        <option>Women's fitted</option>
+        <option>Kids</option>
+      </select>
+    </div>
+    <button type="button" class="remove-btn" style="height:38px;margin-top:20px" onclick="removeShirt('shirt-${n}')">&#10005;</button>
+  </div>`;
+}
+
+function addParticipant() {
+  pCount++;
+  document.getElementById('participants-list').insertAdjacentHTML('beforeend', participantHTML(pCount, pCount === 1));
+  updateSummary();
+}
+
+function removeParticipant(btn) {
+  btn.closest('.participant-card').remove();
+  updateSummary();
+}
+
+function addShirt() {
+  tCount++;
+  document.getElementById('tshirt-list').insertAdjacentHTML('beforeend', shirtHTML(tCount));
+  updateSummary();
+}
+
+function removeShirt(id) {
+  document.getElementById(id).remove();
+  updateSummary();
+}
+
+function updateSummary() {
+  const ps = document.querySelectorAll('.participant-card').length;
+  const shirts = document.querySelectorAll('.tshirt-order-row');
+  const kidsRegex = /kids/i;
+  let cost = 0;
+  shirts.forEach(s => {
+    const size = s.querySelector('.s-size').value;
+    cost += kidsRegex.test(size) ? 8 : 12;
+  });
+  document.getElementById('p-count').textContent = ps;
+  document.getElementById('t-count').textContent = shirts.length;
+  document.getElementById('shirt-total').textContent = '£' + cost;
+}
+
+function collectData() {
+  const participants = [];
+  document.querySelectorAll('.participant-card').forEach((card, i) => {
+    participants.push({
+      num: i + 1,
+      name: card.querySelector('.p-name').value,
+      dob: card.querySelector('.p-dob').value,
+      distance: card.querySelector('.p-distance').value,
+      category: card.querySelector('.p-category').value,
+      ecName: card.querySelector('.p-ec-name').value,
+      ecPhone: card.querySelector('.p-ec-phone').value,
+    });
+  });
+
+  const shirts = [];
+  document.querySelectorAll('.tshirt-order-row').forEach(row => {
+    shirts.push({
+      name: row.querySelector('.s-name').value,
+      size: row.querySelector('.s-size').value,
+      fit: row.querySelector('.s-fit').value,
+    });
+  });
+
+  const sources = [];
+  document.querySelectorAll('#source-checks input:checked').forEach(cb => sources.push(cb.value));
+
+  return {
+    leadName: document.getElementById('lead-name').value,
+    leadEmail: document.getElementById('lead-email').value,
+    leadPhone: document.getElementById('lead-phone').value,
+    submittedAt: new Date().toISOString(),
+    participants,
+    shirts,
+    heardVia: sources.join(', '),
+  };
+}
+
+function validate(data) {
+  if (!data.leadName || !data.leadEmail) return 'Please enter your name and email address.';
+  if (data.participants.length === 0) return 'Please add at least one participant.';
+  for (const p of data.participants) {
+    if (!p.name) return `Please enter a name for participant ${p.num}.`;
+    if (!p.distance) return `Please select a race distance for ${p.name || 'participant ' + p.num}.`;
+    if (!p.ecName || !p.ecPhone) return `Please enter emergency contact details for ${p.name || 'participant ' + p.num}.`;
+  }
+  if (!document.getElementById('waiver-check').checked) return 'Please agree to the waiver to continue.';
+  return null;
+}
+
+async function submitForm() {
+  const data = collectData();
+  const err = validate(data);
+  const errEl = document.getElementById('error-msg');
+
+  if (err) {
+    errEl.textContent = err;
+    errEl.style.display = 'block';
+    errEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    return;
+  }
+
+  errEl.style.display = 'none';
+  const btn = document.getElementById('submit-btn');
+  const btnText = document.getElementById('btn-text');
+  const spinner = document.getElementById('spinner');
+  btn.disabled = true;
+  btnText.style.display = 'none';
+  spinner.style.display = 'block';
+
+  try {
+    await fetch(APPS_SCRIPT_URL, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data),
+    });
+    document.getElementById('form-wrap').style.display = 'none';
+    document.getElementById('success-screen').style.display = 'block';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  } catch (e) {
+    btn.disabled = false;
+    btnText.style.display = 'block';
+    spinner.style.display = 'none';
+    errEl.textContent = 'Submission failed — please check your connection and try again.';
+    errEl.style.display = 'block';
+  }
+}
+
+// Initialise with one participant
+addParticipant();
+</script>
+</body>
+</html>
