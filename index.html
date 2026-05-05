@@ -321,6 +321,67 @@
   }
   .success-screen p { font-size: 0.9rem; color: var(--gray-600); line-height: 1.6; }
 
+  /* PAYMENT CTA */
+  .pay-box {
+    background: var(--accent-light);
+    border: 2px solid var(--accent);
+    border-radius: var(--radius);
+    padding: 1.5rem;
+    margin-top: 1.5rem;
+  }
+  .pay-box h3 {
+    font-family: 'Nunito', sans-serif;
+    font-size: 1.1rem;
+    font-weight: 800;
+    color: #9a3412;
+    margin-bottom: 0.4rem;
+  }
+  .pay-box p { font-size: 0.82rem; color: #c2410c; margin-bottom: 1rem; line-height: 1.5; }
+  .pay-btn {
+    display: inline-block;
+    background: var(--accent);
+    color: white;
+    font-family: 'Nunito', sans-serif;
+    font-weight: 800;
+    font-size: 1rem;
+    padding: 12px 28px;
+    border-radius: var(--radius-sm);
+    text-decoration: none;
+    border: none;
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+  .pay-btn:hover { background: #ea580c; }
+  .divider {
+    display: flex; align-items: center; gap: 10px;
+    margin: 1rem 0;
+    font-size: 0.75rem; color: var(--gray-400);
+  }
+  .divider::before, .divider::after {
+    content: ''; flex: 1;
+    border-top: 1px solid var(--gray-200);
+  }
+  .qr-wrap {
+    display: flex; flex-direction: column; align-items: center; gap: 8px;
+  }
+  .qr-wrap canvas { border-radius: var(--radius-sm); }
+  .qr-label { font-size: 0.75rem; color: #c2410c; font-weight: 600; }
+  .fee-breakdown {
+    display: flex; justify-content: center; gap: 1.5rem;
+    margin: 1rem 0 0;
+    flex-wrap: wrap;
+  }
+  .fee-item {
+    text-align: center;
+    background: white;
+    border: 1px solid #fed7aa;
+    border-radius: var(--radius-sm);
+    padding: 8px 16px;
+    min-width: 90px;
+  }
+  .fee-item .fee-label { font-size: 0.7rem; color: #c2410c; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; }
+  .fee-item .fee-price { font-family: 'Nunito', sans-serif; font-size: 1.1rem; font-weight: 800; color: #9a3412; }
+
   /* ERROR */
   .error-msg {
     display: none;
@@ -365,11 +426,11 @@
 
     <!-- LEAD CONTACT -->
     <div class="card">
-      <div class="section-title">Your contact details</div>
+      <div class="section-title">Your details</div>
       <div class="row2">
         <div class="field">
           <label>Full name <span class="req">*</span></label>
-          <input type="text" id="lead-name" placeholder="Jane Smith" required>
+          <input type="text" id="lead-name" placeholder="Jane Smith" required oninput="syncLeadName()">
         </div>
         <div class="field">
           <label>Email address <span class="req">*</span></label>
@@ -380,6 +441,29 @@
       <div class="field">
         <label>Phone number</label>
         <input type="tel" id="lead-phone" placeholder="+44 7700 000000">
+      </div>
+      <div class="field" style="margin-top:1.25rem;padding-top:1.1rem;border-top:2px solid var(--blue-light)">
+        <div class="section-title" style="margin-bottom:0.75rem">Emergency contact <span style="font-size:0.7rem;color:var(--gray-400);text-transform:none;letter-spacing:0;font-weight:400">(applies to all participants)</span></div>
+        <div class="row2">
+          <div class="field">
+            <label>Contact name <span class="req">*</span></label>
+            <input type="text" id="ec-name" placeholder="John Smith" required>
+          </div>
+          <div class="field">
+            <label>Contact phone <span class="req">*</span></label>
+            <input type="tel" id="ec-phone" placeholder="+44 7700 000000" required>
+          </div>
+        </div>
+        <div class="field">
+          <label>Relationship</label>
+          <select id="ec-relationship">
+            <option value="">Select...</option>
+            <option>Partner / spouse</option>
+            <option>Parent / guardian</option>
+            <option>Friend</option>
+            <option>Other</option>
+          </select>
+        </div>
       </div>
     </div>
 
@@ -419,9 +503,14 @@
       <div class="waiver-text">
         This event is weather dependent and may be postponed to spring. Buggies and pushchairs are permitted on the 1km route only (paved/gravel surface). All participants take part at their own risk. By submitting this form, you confirm that all participants listed are fit to take part and agree to the event terms and conditions.
       </div>
+      <a href="YOUR_TERMS_LINK_HERE" target="_blank" rel="noopener"
+         style="display:inline-flex;align-items:center;gap:5px;font-size:0.82rem;font-weight:600;color:var(--blue);margin-bottom:0.75rem;text-decoration:none;">
+        &#128196; Read the full terms &amp; conditions
+        <span style="font-size:0.7rem;opacity:0.6">(opens in new tab)</span>
+      </a>
       <label class="check-item" id="waiver-check-label">
         <input type="checkbox" id="waiver-check">
-        I confirm all participants have read and agreed to the above <span class="req">*</span>
+        I have read and agree to the full terms &amp; conditions <span class="req">*</span>
       </label>
     </div>
 
@@ -449,17 +538,43 @@
     <div class="success-icon">&#10003;</div>
     <h2>You're registered!</h2>
     <p>Thanks for signing up for the Leafield Fun Run 2026.<br>
-    We'll be in touch with event details closer to the date.<br><br>
-    <em>See you on the start line!</em></p>
+    We'll be in touch with event details closer to the date.</p>
+
+    <div class="pay-box" id="pay-box">
+      <h3>One last step — pay your entry fee</h3>
+      <p>Your registration is confirmed once payment is received. Use the itemised total below — enter this amount when prompted by SumUp.</p>
+
+      <div id="fee-breakdown"></div>
+
+      <div style="margin-top:1.25rem;display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+        <a id="pay-link" href="#" target="_blank" rel="noopener" class="pay-btn">Pay now via SumUp &rarr;</a>
+        <span style="font-size:0.78rem;color:#c2410c">Enter <strong id="pay-amount-hint"></strong> when prompted</span>
+      </div>
+
+      <div class="divider">or scan on your phone</div>
+
+      <div class="qr-wrap">
+        <img id="qr-img" src="qrcode.png" width="160" height="160" style="border-radius:8px" alt="SumUp payment QR code">
+        <span class="qr-label">Scan to pay — enter <span id="qr-amount-hint"></span> when prompted</span>
+      </div>
+    </div>
+
+    <p style="margin-top:1.5rem;font-size:0.78rem;color:var(--gray-400)">
+      Questions? Email <a href="mailto:leafieldfunrun@gmail.com" style="color:var(--blue)">leafieldfunrun@gmail.com</a>
+    </p>
   </div>
 
 </div><!-- end form-outer -->
 
 <script>
 // ========================================================
-// CONFIGURATION — replace this URL after deploying Apps Script
+// CONFIGURATION
 // ========================================================
 const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw7shCV4gDUL8kbFqi5DvyABq3l8nTPvjrX9741x1fysNy59nfkBR9uNe6AMECEXQfN/exec';
+const SUMUP_PAYMENT_URL = 'https://pay.sumup.com/b2c/QDDZTU44';
+// e.g. 'https://pay.sumup.com/b2c/XXXXXXXX'
+// Entry fees — adjust to match your actual prices
+const FEES = { adult: 10, child: 5, shirtAdult: 12, shirtKids: 8 };
 // ========================================================
 
 let pCount = 0;
@@ -467,16 +582,18 @@ let tCount = 0;
 
 function participantHTML(n, isFirst) {
   const removeBtn = isFirst ? '' : `<button type="button" class="remove-btn" onclick="removeParticipant(this)">Remove</button>`;
+  const namePlaceholder = isFirst ? 'Your name' : 'Full name';
+  const nameId = isFirst ? 'p1-name' : '';
   return `
   <div class="participant-card" data-p="${n}">
     <div class="p-header">
-      <span class="p-num">Participant ${n}${isFirst ? ' (you)' : ''}</span>
+      <span class="p-num">Participant ${n}${isFirst ? ' — you (lead registrant)' : ''}</span>
       ${removeBtn}
     </div>
     <div class="row2">
       <div class="field">
         <label>Full name <span class="req">*</span></label>
-        <input type="text" placeholder="Full name" class="p-name" required>
+        <input type="text" placeholder="${namePlaceholder}" class="p-name" ${nameId ? `id="${nameId}"` : ''} required>
       </div>
       <div class="field">
         <label>Date of birth</label>
@@ -500,16 +617,6 @@ function participantHTML(n, isFirst) {
           <option>Child (under 16)</option>
           <option>Young person (16–17)</option>
         </select>
-      </div>
-    </div>
-    <div class="row2">
-      <div class="field">
-        <label>Emergency contact name <span class="req">*</span></label>
-        <input type="text" placeholder="Contact name" class="p-ec-name" required>
-      </div>
-      <div class="field">
-        <label>Emergency contact phone <span class="req">*</span></label>
-        <input type="tel" placeholder="+44 7700 000000" class="p-ec-phone" required>
       </div>
     </div>
   </div>`;
@@ -542,6 +649,17 @@ function shirtHTML(n) {
     <button type="button" class="remove-btn" style="height:38px;margin-top:20px" onclick="removeShirt('shirt-${n}')">&#10005;</button>
   </div>`;
 }
+
+function syncLeadName() {
+  const leadName = document.getElementById('lead-name').value;
+  const p1Name = document.getElementById('p1-name');
+  if (p1Name && !p1Name.dataset.edited) p1Name.value = leadName;
+}
+
+// Mark first participant name as manually edited so sync stops
+document.addEventListener('input', function(e) {
+  if (e.target && e.target.id === 'p1-name') e.target.dataset.edited = 'true';
+});
 
 function addParticipant() {
   pCount++;
@@ -580,6 +698,10 @@ function updateSummary() {
 }
 
 function collectData() {
+  const ecName = document.getElementById('ec-name').value;
+  const ecPhone = document.getElementById('ec-phone').value;
+  const ecRelationship = document.getElementById('ec-relationship').value;
+
   const participants = [];
   document.querySelectorAll('.participant-card').forEach((card, i) => {
     participants.push({
@@ -588,8 +710,9 @@ function collectData() {
       dob: card.querySelector('.p-dob').value,
       distance: card.querySelector('.p-distance').value,
       category: card.querySelector('.p-category').value,
-      ecName: card.querySelector('.p-ec-name').value,
-      ecPhone: card.querySelector('.p-ec-phone').value,
+      ecName,
+      ecPhone,
+      ecRelationship,
     });
   });
 
@@ -618,11 +741,11 @@ function collectData() {
 
 function validate(data) {
   if (!data.leadName || !data.leadEmail) return 'Please enter your name and email address.';
+  if (!data.participants[0]?.ecName || !data.participants[0]?.ecPhone) return 'Please enter an emergency contact name and phone number.';
   if (data.participants.length === 0) return 'Please add at least one participant.';
   for (const p of data.participants) {
     if (!p.name) return `Please enter a name for participant ${p.num}.`;
     if (!p.distance) return `Please select a race distance for ${p.name || 'participant ' + p.num}.`;
-    if (!p.ecName || !p.ecPhone) return `Please enter emergency contact details for ${p.name || 'participant ' + p.num}.`;
   }
   if (!document.getElementById('waiver-check').checked) return 'Please agree to the waiver to continue.';
   return null;
@@ -656,8 +779,77 @@ async function submitForm() {
       body: JSON.stringify(data),
     });
     document.getElementById('form-wrap').style.display = 'none';
-    document.getElementById('success-screen').style.display = 'block';
+    const successEl = document.getElementById('success-screen');
+    successEl.style.display = 'block';
     window.scrollTo({ top: 0, behavior: 'smooth' });
+
+    // Set SumUp link
+    document.getElementById('pay-link').href = SUMUP_PAYMENT_URL;
+
+    // Fee breakdown — entries + t-shirts
+    let adults = 0, children = 0;
+    data.participants.forEach(p => {
+      if (p.category && p.category.toLowerCase().includes('child')) children++;
+      else adults++;
+    });
+    const entryTotal = (adults * FEES.adult) + (children * FEES.child);
+
+    let shirtTotal = 0;
+    const shirtLines = [];
+    data.shirts.forEach(s => {
+      const price = /kids/i.test(s.size) ? FEES.shirtKids : FEES.shirtAdult;
+      shirtTotal += price;
+      shirtLines.push({ name: s.name, size: s.size, fit: s.fit, price });
+    });
+
+    const grandTotal = entryTotal + shirtTotal;
+
+    // Build itemised HTML
+    let breakdown = `<table style="width:100%;border-collapse:collapse;font-size:0.82rem;margin-bottom:0.75rem">`;
+    breakdown += `<thead><tr>
+      <th style="text-align:left;padding:5px 8px;color:#9a3412;font-size:0.7rem;text-transform:uppercase;letter-spacing:0.05em;border-bottom:1px solid #fed7aa">Item</th>
+      <th style="text-align:right;padding:5px 8px;color:#9a3412;font-size:0.7rem;text-transform:uppercase;letter-spacing:0.05em;border-bottom:1px solid #fed7aa">Amount</th>
+    </tr></thead><tbody>`;
+
+    // Entry fees
+    if (adults > 0) {
+      breakdown += `<tr>
+        <td style="padding:5px 8px;color:var(--gray-800)">Entry — Adult${adults > 1 ? 's' : ''} x${adults} (£${FEES.adult} each)</td>
+        <td style="padding:5px 8px;text-align:right;font-weight:600;color:var(--gray-800)">£${adults * FEES.adult}</td>
+      </tr>`;
+    }
+    if (children > 0) {
+      breakdown += `<tr>
+        <td style="padding:5px 8px;color:var(--gray-800)">Entry — Child${children > 1 ? 'ren' : ''} x${children} (£${FEES.child} each)</td>
+        <td style="padding:5px 8px;text-align:right;font-weight:600;color:var(--gray-800)">£${children * FEES.child}</td>
+      </tr>`;
+    }
+
+    // T-shirts
+    shirtLines.forEach(s => {
+      breakdown += `<tr>
+        <td style="padding:5px 8px;color:var(--gray-800)">T-shirt — ${s.name || 'unnamed'} (${s.size}, ${s.fit})</td>
+        <td style="padding:5px 8px;text-align:right;font-weight:600;color:var(--gray-800)">£${s.price}</td>
+      </tr>`;
+    });
+
+    // Grand total row
+    breakdown += `<tr style="border-top:2px solid #f97316">
+      <td style="padding:8px 8px;font-weight:700;font-size:0.95rem;color:#9a3412">Total to pay</td>
+      <td style="padding:8px 8px;text-align:right;font-weight:800;font-size:1.1rem;color:#9a3412">£${grandTotal}</td>
+    </tr>`;
+    breakdown += `</tbody></table>`;
+
+    document.getElementById('fee-breakdown').innerHTML = breakdown;
+    document.getElementById('pay-amount-hint').textContent = `£${grandTotal}`;
+    document.getElementById('qr-amount-hint').textContent = `£${grandTotal}`;
+
+    // Pass total into data for Apps Script
+    data.grandTotal = grandTotal;
+    data.entryTotal = entryTotal;
+    data.shirtTotal = shirtTotal;
+
+    // QR code is a static image (qrcode.png) — no generation needed
   } catch (e) {
     btn.disabled = false;
     btnText.style.display = 'block';
