@@ -405,6 +405,69 @@
     margin: 0 auto;
   }
   @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* SPONSORS BANNER */
+.sponsors-bar {
+  background: var(--blue-dark);
+  margin-top: 2.5rem;
+  padding: 1.25rem 1rem;
+}
+.sponsors-inner {
+  max-width: 620px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+.sponsors-label {
+  font-size: 0.7rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: #93c5fd;
+}
+.sponsors-logos {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+}
+.sponsor-link {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  text-decoration: none;
+  transition: opacity 0.15s;
+}
+.sponsor-link:hover { opacity: 0.85; }
+.sponsor-logo {
+  height: 56px;
+  width: auto;
+  max-width: 140px;
+  object-fit: contain;
+  border-radius: 8px;
+  background: white;
+  padding: 6px 10px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.25);
+}
+.sponsor-name {
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: #bfdbfe;
+  letter-spacing: 0.03em;
+}
+.sponsor-divider {
+  width: 1px;
+  height: 48px;
+  background: rgba(255,255,255,0.15);
+}
+@media (max-width: 400px) {
+  .sponsor-divider { display: none; }
+  .sponsors-logos { gap: 1.25rem; }
+}
 </style>
 </head>
 <body>
@@ -564,6 +627,25 @@
   </div>
 
 </div><!-- end form-outer -->
+<!-- SPONSORS BANNER -->
+<div class="sponsors-bar">
+  <div class="sponsors-inner">
+    <span class="sponsors-label">Proudly sponsored by</span>
+    <div class="sponsors-logos">
+      <a href="https://www.day1displays.co.uk" target="_blank" rel="noopener" class="sponsor-link">
+        <img src="https://www.day1displays.co.uk/images/social.jpg"
+             alt="Day1 Displays" class="sponsor-logo">
+        <span class="sponsor-name">Day1 Displays</span>
+      </a>
+      <div class="sponsor-divider"></div>
+      <a href="https://www.scottfraser.co.uk" target="_blank" rel="noopener" class="sponsor-link">
+        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR6TTWJOROs-RNmDeCm4PA3Pw7_WU7gYF8hHWp20tn-MOnMGdM8zt90cWow&s=10"
+             alt="Scott Fraser" class="sponsor-logo">
+        <span class="sponsor-name">Scott Fraser</span>
+      </a>
+    </div>
+  </div>
+</div>
 
 <script>
 // ========================================================
