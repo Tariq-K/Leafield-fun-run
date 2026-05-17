@@ -538,10 +538,23 @@
 
     <!-- T-SHIRTS -->
     <div class="card">
-      <div class="section-title">T-shirt orders (optional)</div>
+      <div class="section-title">T-shirt orders</div>
+      <!-- T-shirt preview images -->
+      <div style="display:flex;gap:12px;margin-bottom:1rem;justify-content:center">
+        <div style="text-align:center">
+          <img src="tshirt-front.png" alt="T-shirt front" style="height:140px;width:auto;object-fit:contain;border-radius:8px;border:1px solid var(--gray-200)">
+          <div style="font-size:0.7rem;color:var(--gray-400);margin-top:4px;font-weight:600;text-transform:uppercase;letter-spacing:0.05em">Front</div>
+        </div>
+        <div style="text-align:center">
+          <img src="tshirt-back.png" alt="T-shirt back" style="height:140px;width:auto;object-fit:contain;border-radius:8px;border:1px solid var(--gray-200)">
+          <div style="font-size:0.7rem;color:var(--gray-400);margin-top:4px;font-weight:600;text-transform:uppercase;letter-spacing:0.05em">Back</div>
+        </div>
+      </div>
+
       <div class="tshirt-price-note">
-        &#128248; Adults £12 &nbsp;·&nbsp; Kids £8 &nbsp;·&nbsp; Sizes: XS S M L XL XXL &nbsp;·&nbsp; Kids: 3–4 / 5–6 / 7–8 / 9–10 / 11–12<br>
-        Each t-shirt features the Leafield Fun Run 2026 logo. Discounted for participants.
+        &#128248; Adults £15 &nbsp;·&nbsp; Kids £10.50 &nbsp;·&nbsp; Adult sizes: XS S M L XL XXL &nbsp;·&nbsp; Kids sizes: 3–4 / 5–6 / 7–8 / 9–11 / 12–14<br>
+        Each t-shirt features the Leafield Fun Run 2026 logo.<br>
+        &#128336; <strong>Collection:</strong> Available from Leafield Pre-School w/c 7th September, or on the day from the registration desk.
       </div>
       <div id="tshirt-list"></div>
       <button type="button" class="add-participant-btn" style="border-color:#f97316;color:#c2410c;background:#fff7ed" onclick="addShirt()">+ Add a t-shirt</button>
@@ -563,7 +576,7 @@
     <div class="card">
       <div class="section-title">Waiver &amp; declaration</div>
       <div class="waiver-text">
-        Buggies and pushchairs are permitted on the 1km route only (paved/gravel surface). All participants take part at their own risk. This event is weather dependent and may be postponed to spring. By submitting this form, you confirm that all participants listed are fit to take part and agree to the event terms and conditions.
+        Buggies and pushchairs are permitted on the 1km route only (paved/gravel surface). All participants take part at their own risk. <strong>No dogs permitted on the course.</strong> This event is weather dependent and may be postponed to spring. By submitting this form, you confirm that all participants listed are fit to take part and agree to the event terms and conditions.
       </div>
       <a href="https://drive.google.com/file/d/19P4osmUHLNEKV0JQteewxFAvI6Fbenqs/view?usp=sharing" target="_blank" rel="noopener"
          style="display:inline-flex;align-items:center;gap:5px;font-size:0.82rem;font-weight:600;color:var(--blue);margin-bottom:0.75rem;text-decoration:none;">
@@ -652,10 +665,10 @@
 // CONFIGURATION
 // ========================================================
 const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw7shCV4gDUL8kbFqi5DvyABq3l8nTPvjrX9741x1fysNy59nfkBR9uNe6AMECEXQfN/exec';
-const SUMUP_PAYMENT_URL = 'https://pay.sumup.com/b2c/QDDZTU44';
+const SUMUP_PAYMENT_URL = 'https://pay.sumup.com/b2c/QU50ZCYU';
 // e.g. 'https://pay.sumup.com/b2c/XXXXXXXX'
 // Entry fees — adjust to match your actual prices
-const FEES = { adult: 10, child: 5, shirtAdult: 12, shirtKids: 8 };
+const FEES = { adult: 10, child: 5, shirtAdult: 15, shirtKids: 10.50 };
 // ========================================================
 
 let pCount = 0;
@@ -716,7 +729,7 @@ function shirtHTML(n) {
         <option>XS</option><option>S</option><option selected>M</option>
         <option>L</option><option>XL</option><option>XXL</option>
         <option>Kids 3–4</option><option>Kids 5–6</option>
-        <option>Kids 7–8</option><option>Kids 9–10</option><option>Kids 11–12</option>
+        <option>Kids 7–8</option><option>Kids 9–11</option><option>Kids 12–14</option>
       </select>
     </div>
     <div class="field" style="margin:0">
@@ -771,7 +784,7 @@ function updateSummary() {
   let cost = 0;
   shirts.forEach(s => {
     const size = s.querySelector('.s-size').value;
-    cost += kidsRegex.test(size) ? 8 : 12;
+    cost += kidsRegex.test(size) ? FEES.shirtKids : FEES.shirtAdult;
   });
   document.getElementById('p-count').textContent = ps;
   document.getElementById('t-count').textContent = shirts.length;
