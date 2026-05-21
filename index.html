@@ -813,7 +813,6 @@ function collectData() {
     shirts.push({
       name: row.querySelector('.s-name').value,
       size: row.querySelector('.s-size').value,
-      fit: row.querySelector('.s-fit').value,
     });
   });
 
@@ -891,7 +890,7 @@ async function submitForm() {
     data.shirts.forEach(s => {
       const price = /kids/i.test(s.size) ? FEES.shirtKids : FEES.shirtAdult;
       shirtTotal += price;
-      shirtLines.push({ name: s.name, size: s.size, fit: s.fit, price });
+      shirtLines.push({ name: s.name, size: s.size, price });
     });
 
     const grandTotal = entryTotal + shirtTotal;
@@ -920,7 +919,7 @@ async function submitForm() {
     // T-shirts
     shirtLines.forEach(s => {
       breakdown += `<tr>
-        <td style="padding:5px 8px;color:var(--gray-800)">T-shirt — ${s.name || 'unnamed'} (${s.size}, ${s.fit})</td>
+        <td style="padding:5px 8px;color:var(--gray-800)">T-shirt — ${s.name || 'unnamed'} (${s.size})</td>
         <td style="padding:5px 8px;text-align:right;font-weight:600;color:var(--gray-800)">£${s.price}</td>
       </tr>`;
     });
