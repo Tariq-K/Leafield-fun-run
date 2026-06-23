@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Leafield Fun Run – Route Map</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { height: 100%; overflow: hidden; background: #0d1a0d; }
+    body {
+      font-family: -apple-system, 'Helvetica Neue', Arial, sans-serif;
+      color: #eeeae0;
+      display: flex;
+      flex-direction: column;
+      height: 100dvh;
+    }
+
+    header {
+      background: #0d1a0d;
+      padding: 10px 14px 8px;
+      flex-shrink: 0;
+      border-bottom: 1px solid #1e3020;
+    }
+    .header-row { display: flex; align-items: center; gap: 9px; margin-bottom: 8px; }
+    .run-icon { font-size: 20px; line-height: 1; }
+    .title-block h1 {
+      font-size: 14px; font-weight: 800; letter-spacing: 0.06em;
+      text-transform: uppercase; color: #eeeae0;
+    }
+    .title-block p {
+      font-size: 10px; color: #5a9a60; letter-spacing: 0.07em;
+      text-transform: uppercase; margin-top: 1px;
+    }
+
+    .route-toggles { display: flex; gap: 7px; }
+    .toggle-btn {
+      flex: 1; padding: 7px 8px; border-radius: 7px; border: 2px solid transparent;
+      font-size: 11px; font-weight: 800; letter-spacing: 0.05em; cursor: pointer;
+      text-transform: uppercase; transition: all 0.15s;
+      display: flex; align-items: center; justify-content: center; gap: 5px;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .toggle-btn.r5 { background: rgba(255,75,40,0.12); border-color: #ff4b28; color: #ff7055; }
+    .toggle-btn.r5.on { background: #ff4b28; color: #fff; }
+    .toggle-btn.r1 { background: rgba(60,200,255,0.12); border-color: #3cc8ff; color: #3cc8ff; }
+    .toggle-btn.r1.on { background: #3cc8ff; color: #0d1a0d; }
+    .dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+    .dot5 { background: #ff4b28; }
+    .dot1 { background: #3cc8ff; }
+    .toggle-btn.r5.on .dot5 { background: rgba(255,255,255,0.8); }
+    .toggle-btn.r1.on .dot1 { background: #0d1a0d; }
+
+    #map { flex: 1; width: 100%; min-height: 0; }
+
+    .stats-bar {
+      display: flex; background: #0d1a0d;
+      border-top: 1px solid #1e3020; border-bottom: 1px solid #1e3020;
+      flex-shrink: 0;
+    }
+    .stat { flex: 1; padding: 6px 4px; text-align: center; border-right: 1px solid #1e3020; }
+    .stat:last-child { border-right: none; }
+    .stat .val { font-size: 13px; font-weight: 800; line-height: 1; }
+    .val.c5 { color: #ff7055; }
+    .val.c1 { color: #3cc8ff; }
+    .val.cn { color: #3d5a3d; }
+    .stat .lbl { font-size: 8.5px; text-transform: uppercase; letter-spacing: 0.08em; color: #3d5a3d; margin-top: 2px; }
+
+    #elev-panel {
+      flex-shrink: 0; background: #0d1a0d;
+      padding: 6px 14px 10px;
+    }
+    .elev-header {
+      display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;
+    }
+    .elev-title { font-size: 9px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: #3d5a3d; }
+    .elev-range { font-size: 9px; color: #3d5a3d; }
+    #elev-canvas { width: 100%; height: 64px; display: block; }
+    .elev-xaxis { display: flex; justify-content: space-between; margin-top: 2px; }
+    .elev-xaxis span { font-size: 8px; color: #2e472e; }
+
+    .leaflet-tooltip {
+      background: #0d1a0d !important; border: 1px solid #2a4a2a !important;
+      color: #eeeae0 !important; font-size: 12px !important;
+      border-radius: 6px !important; padding: 4px 8px !important; box-shadow: none !important;
+    }
+    .leaflet-control-attribution { font-size: 9px !important; }
+    .leaflet-control-zoom a { width: 34px !important; height: 34px !important; line-height: 34px !important; font-size: 16px !important; }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="header-row">
+    <span class="run-icon">🏃</span>
+    <div class="title-block">
+      <h1>Leafield Fun Run</h1>
+      <p>Route Map · Leafield, Oxfordshire</p>
+    </div>
+  </div>
+  <div class="route-toggles">
+    <button class="toggle-btn r5 on" onclick="toggleRoute(5)">
+      <span class="dot dot5"></span>5 / 10 km
+    </button>
+    <button class="toggle-btn r1 on" onclick="toggleRoute(1)">
+      <span class="dot dot1"></span>1 km
+    </button>
+  </div>
+</header>
+
+<div id="map"></div>
+
+<div class="stats-bar">
+  <div class="stat"><div class="val" id="s-dist">—</div><div class="lbl">Distance</div></div>
+  <div class="stat"><div class="val" id="s-ascent">—</div><div class="lbl">↑ Ascent</div></div>
+  <div class="stat"><div class="val" id="s-descent">—</div><div class="lbl">↓ Descent</div></div>
+  <div class="stat"><div class="val" id="s-ele">—</div><div class="lbl">Max Alt.</div></div>
+</div>
+
+<div id="elev-panel">
+  <div class="elev-header">
+    <span class="elev-title">Elevation Profile</span>
+    <span class="elev-range" id="elev-range"></span>
+  </div>
+  <canvas id="elev-canvas"></canvas>
+  <div class="elev-xaxis">
+    <span>0 km</span><span id="xm"></span><span id="xe"></span>
+  </div>
+</div>
+
+<script>
+// Route data: [lat, lon, ele_m, dist_km]
+// Both routes share same start point. Finish snapped to same point (average of the two GPX endpoints, ~30m apart)
+const FINISH = [51.87078, -1.51891]; // shared finish, midpoint between both GPX endpoints
+
+const R5_raw = [[51.87032,-1.51737,161.0,0.0],[51.87048,-1.51726,160.8,0.019],[51.87132,-1.51727,159.6,0.113],[51.87182,-1.51708,159.0,0.17],[51.87205,-1.51721,158.6,0.197],[51.87226,-1.51768,158.2,0.237],[51.87268,-1.5187,157.1,0.321],[51.87311,-1.51939,156.3,0.389],[51.87354,-1.51973,155.7,0.442],[51.87371,-1.52012,155.3,0.475],[51.87376,-1.52081,154.3,0.522],[51.8736,-1.52172,152.4,0.588],[51.87355,-1.52218,151.4,0.62],[51.87341,-1.5225,150.6,0.647],[51.87259,-1.52359,147.1,0.765],[51.8725,-1.52407,146.0,0.799],[51.872,-1.52464,144.0,0.867],[51.87174,-1.52507,142.7,0.909],[51.87155,-1.52562,141.4,0.952],[51.87172,-1.52689,139.2,1.041],[51.8716,-1.52738,138.5,1.077],[51.86818,-1.52542,130.4,1.481],[51.86669,-1.52385,132.5,1.679],[51.8673,-1.52299,133.8,1.769],[51.86691,-1.52236,134.6,1.831],[51.86669,-1.52213,135.0,1.86],[51.86636,-1.52222,135.6,1.897],[51.86561,-1.52301,137.0,1.997],[51.86519,-1.52365,138.3,2.061],[51.86413,-1.52604,142.7,2.263],[51.86344,-1.52747,145.4,2.388],[51.86298,-1.52789,146.7,2.447],[51.86285,-1.52714,147.8,2.5],[51.86292,-1.52615,149.3,2.569],[51.86279,-1.5246,150.6,2.676],[51.8627,-1.52422,150.8,2.704],[51.86172,-1.52195,152.2,2.895],[51.86196,-1.51845,153.5,3.137],[51.86399,-1.51867,154.5,3.363],[51.86566,-1.51877,155.1,3.549],[51.86572,-1.51765,155.3,3.626],[51.86482,-1.51737,155.5,3.728],[51.86539,-1.51718,155.6,3.793],[51.86615,-1.51707,155.8,3.878],[51.86635,-1.51709,155.8,3.9],[51.86702,-1.51694,156.0,3.976],[51.86695,-1.51795,156.2,4.046],[51.86742,-1.51848,156.4,4.109],[51.86722,-1.5191,156.6,4.157],[51.86738,-1.51981,156.8,4.209],[51.8676,-1.51983,156.9,4.234],[51.86762,-1.52065,157.2,4.29],[51.86782,-1.52075,157.3,4.314],[51.86787,-1.52117,157.4,4.343],[51.8678,-1.52153,157.5,4.369],[51.86787,-1.52247,157.7,4.434],[51.86811,-1.52287,157.9,4.472],[51.86831,-1.52302,158.0,4.497],[51.86841,-1.52257,158.1,4.53],[51.86872,-1.52229,158.3,4.569],[51.86921,-1.52194,158.6,4.629],[51.86971,-1.52254,158.9,4.698],[51.87048,-1.52303,159.3,4.79],[51.87085,-1.52291,159.5,4.832],[51.87104,-1.52267,159.7,4.859],[51.8712,-1.52238,159.8,4.886],[51.87126,-1.52204,159.9,4.91],[FINISH[0],FINISH[1],161.0,5.15]];
+
+const R1_raw = [[51.87032,-1.51737,161.0,0.0],[51.87052,-1.5173,161.1,0.023],[51.87133,-1.51728,161.4,0.113],[51.87181,-1.51707,161.6,0.168],[51.87205,-1.51721,161.7,0.197],[51.87225,-1.51767,161.8,0.235],[51.87263,-1.51866,162.2,0.315],[51.87295,-1.51916,162.7,0.365],[51.87312,-1.51936,162.9,0.388],[51.8736,-1.51985,163.5,0.452],[51.87371,-1.52019,163.8,0.478],[51.87374,-1.52071,164.1,0.514],[51.87368,-1.52124,164.5,0.551],[51.87358,-1.52169,164.8,0.584],[51.87353,-1.52217,164.8,0.617],[51.8734,-1.52255,164.5,0.647],[51.87251,-1.52211,163.5,0.751],[51.8723,-1.52181,163.2,0.782],[51.87205,-1.52135,162.7,0.824],[51.87108,-1.51927,160.4,1.003],[FINISH[0],FINISH[1],161.0,1.03]];
+
+const R5 = R5_raw;
+const R1 = R1_raw;
+
+function calcMetrics(pts) {
+  let asc = 0, desc = 0;
+  for (let i = 1; i < pts.length; i++) {
+    const d = pts[i][2] - pts[i-1][2];
+    if (d > 0) asc += d; else desc += Math.abs(d);
+  }
+  const eles = pts.map(p => p[2]);
+  return {
+    dist: pts[pts.length-1][3].toFixed(2),
+    ascent: Math.round(asc),
+    descent: Math.round(desc),
+    eleMin: Math.round(Math.min(...eles)),
+    eleMax: Math.round(Math.max(...eles))
+  };
+}
+const M5 = calcMetrics(R5);
+const M1 = calcMetrics(R1);
+
+const state = { 5: true, 1: true };
+
+// ── Map ──
+const map = L.map('map', { center: [51.868, -1.522], zoom: 14, zoomControl: true });
+
+L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+  attribution: 'Imagery © Esri', maxZoom: 19
+}).addTo(map);
+L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}', {
+  maxZoom: 19, opacity: 0.75
+}).addTo(map);
+
+const line5 = L.polyline(R5.map(p=>[p[0],p[1]]), {
+  color: '#ff4b28', weight: 5, opacity: 0.95, lineJoin: 'round', lineCap: 'round'
+}).addTo(map);
+const line1 = L.polyline(R1.map(p=>[p[0],p[1]]), {
+  color: '#3cc8ff', weight: 4, opacity: 0.95, lineJoin: 'round', lineCap: 'round', dashArray: '9 5'
+}).addTo(map);
+
+// Shared start/finish marker
+const sfIcon = L.divIcon({
+  className: '',
+  html: `<div style="width:18px;height:18px;border-radius:50%;background:#ffcc00;border:3px solid #0d1a0d;box-shadow:0 0 0 2px rgba(255,204,0,0.4)"></div>`,
+  iconSize: [18,18], iconAnchor: [9,9]
+});
+L.marker([R5[0][0], R5[0][1]], { icon: sfIcon }).addTo(map)
+  .bindTooltip('Start / Finish', { permanent: false, direction: 'right' });
+
+map.fitBounds(L.latLngBounds([...R5.map(p=>[p[0],p[1]]),...R1.map(p=>[p[0],p[1]])]), { padding: [22,22] });
+
+// ── Elevation chart ──
+// Draw after layout is complete to get correct canvas dimensions
+function drawElevation(pts, color) {
+  const canvas = document.getElementById('elev-canvas');
+  const ctx = canvas.getContext('2d');
+
+  // Always measure from the DOM element, set canvas resolution explicitly
+  const rect = canvas.getBoundingClientRect();
+  const W = Math.floor(rect.width);
+  const H = Math.floor(rect.height);
+
+  if (W === 0 || H === 0) return; // layout not ready yet
+
+  const dpr = window.devicePixelRatio || 1;
+  canvas.width = W * dpr;
+  canvas.height = H * dpr;
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+  ctx.clearRect(0, 0, W, H);
+
+  const eles = pts.map(p => p[2]);
+  const dists = pts.map(p => p[3]);
+  const eMin = Math.min(...eles) - 4;
+  const eMax = Math.max(...eles) + 4;
+  const dMax = dists[dists.length - 1];
+
+  const pl = 2, pr = 2, pt = 4, pb = 2;
+  const w = W - pl - pr;
+  const h = H - pt - pb;
+
+  const px = d => pl + (d / dMax) * w;
+  const py = e => pt + h - ((e - eMin) / (eMax - eMin)) * h;
+
+  // Subtle grid
+  ctx.strokeStyle = 'rgba(255,255,255,0.05)';
+  ctx.lineWidth = 0.5;
+  for (let i = 1; i <= 3; i++) {
+    const gy = pt + (i/4) * h;
+    ctx.beginPath(); ctx.moveTo(pl, gy); ctx.lineTo(pl+w, gy); ctx.stroke();
+  }
+
+  // Fill
+  const grad = ctx.createLinearGradient(0, pt, 0, pt + h);
+  grad.addColorStop(0, color + 'bb');
+  grad.addColorStop(1, color + '08');
+  ctx.beginPath();
+  ctx.moveTo(px(dists[0]), py(eles[0]));
+  for (let i = 1; i < pts.length; i++) ctx.lineTo(px(dists[i]), py(eles[i]));
+  ctx.lineTo(px(dMax), py(eMin));
+  ctx.lineTo(px(0), py(eMin));
+  ctx.closePath();
+  ctx.fillStyle = grad;
+  ctx.fill();
+
+  // Line
+  ctx.beginPath();
+  ctx.moveTo(px(dists[0]), py(eles[0]));
+  for (let i = 1; i < pts.length; i++) ctx.lineTo(px(dists[i]), py(eles[i]));
+  ctx.strokeStyle = color;
+  ctx.lineWidth = 2;
+  ctx.lineJoin = 'round';
+  ctx.stroke();
+
+  return { eMin: Math.round(eMin+4), eMax: Math.round(eMax-4), dMax };
+}
+
+function updateUI() {
+  let pts, m, color, cls;
+  if (state[5]) {
+    pts = R5; m = M5; color = '#ff4b28'; cls = 'c5';
+  } else if (state[1]) {
+    pts = R1; m = M1; color = '#3cc8ff'; cls = 'c1';
+  } else {
+    ['s-dist','s-ascent','s-descent','s-ele'].forEach(id => {
+      const el = document.getElementById(id);
+      el.className = 'val cn'; el.textContent = '—';
+    });
+    const canvas = document.getElementById('elev-canvas');
+    const ctx = canvas.getContext('2d');
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    document.getElementById('elev-range').textContent = '';
+    document.getElementById('xm').textContent = '';
+    document.getElementById('xe').textContent = '';
+    return;
+  }
+
+  ['s-dist','s-ascent','s-descent','s-ele'].forEach(id => {
+    document.getElementById(id).className = 'val ' + cls;
+  });
+  document.getElementById('s-dist').textContent = m.dist + ' km';
+  document.getElementById('s-ascent').textContent = m.ascent + ' m';
+  document.getElementById('s-descent').textContent = m.descent + ' m';
+  document.getElementById('s-ele').textContent = m.eleMax + ' m';
+
+  const result = drawElevation(pts, color);
+  if (result) {
+    document.getElementById('elev-range').textContent = result.eMin + '–' + result.eMax + ' m asl';
+    document.getElementById('xm').textContent = (result.dMax/2).toFixed(1) + ' km';
+    document.getElementById('xe').textContent = result.dMax.toFixed(2) + ' km';
+  }
+}
+
+function toggleRoute(which) {
+  state[which] = !state[which];
+  document.querySelector('.toggle-btn.r' + which).classList.toggle('on', state[which]);
+  if (which === 5) state[5] ? map.addLayer(line5) : map.removeLayer(line5);
+  if (which === 1) state[1] ? map.addLayer(line1) : map.removeLayer(line1);
+  updateUI();
+}
+
+// Wait for full layout before first draw
+window.addEventListener('load', () => {
+  requestAnimationFrame(() => {
+    requestAnimationFrame(updateUI);
+  });
+});
+
+window.addEventListener('resize', updateUI);
+</script>
+</body>
+</html>
