@@ -116,7 +116,7 @@
     <button class="toggle-btn r5 on" onclick="toggleRoute(5)">
       <span class="dot dot5"></span>5 / 10 km
     </button>
-    <button class="toggle-btn r1 on" onclick="toggleRoute(1)">
+    <button class="toggle-btn r1" onclick="toggleRoute(1)">
       <span class="dot dot1"></span>1 km
     </button>
   </div>
@@ -172,7 +172,8 @@ function calcMetrics(pts) {
 const M5 = calcMetrics(R5);
 const M1 = calcMetrics(R1);
 
-const state = { 5: true, 1: true };
+const state = { 5: true, 1: false };
+let activeRoute = 5;
 
 // ── Map ──
 const map = L.map('map', { center: [51.868, -1.522], zoom: 14, zoomControl: true });
@@ -189,7 +190,7 @@ const line5 = L.polyline(R5.map(p=>[p[0],p[1]]), {
 }).addTo(map);
 const line1 = L.polyline(R1.map(p=>[p[0],p[1]]), {
   color: '#3cc8ff', weight: 4, opacity: 0.95, lineJoin: 'round', lineCap: 'round', dashArray: '9 5'
-}).addTo(map);
+});
 
 function dotIcon() {
   return L.divIcon({
@@ -277,7 +278,11 @@ function drawElevation(pts, color) {
 
 function updateUI() {
   let pts, m, color, cls;
-  if (state[5]) {
+  if (activeRoute === 5 && state[5]) {
+    pts = R5; m = M5; color = '#ff4b28'; cls = 'c5';
+  } else if (activeRoute === 1 && state[1]) {
+    pts = R1; m = M1; color = '#3cc8ff'; cls = 'c1';
+  } else if (state[5]) {
     pts = R5; m = M5; color = '#ff4b28'; cls = 'c5';
   } else if (state[1]) {
     pts = R1; m = M1; color = '#3cc8ff'; cls = 'c1';
@@ -316,6 +321,7 @@ function toggleRoute(which) {
   document.querySelector('.toggle-btn.r' + which).classList.toggle('on', state[which]);
   if (which === 5) state[5] ? map.addLayer(line5) : map.removeLayer(line5);
   if (which === 1) state[1] ? map.addLayer(line1) : map.removeLayer(line1);
+  if (state[which]) activeRoute = which;
   updateUI();
 }
 
