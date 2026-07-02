@@ -882,12 +882,22 @@ async function submitForm() {
     document.getElementById('pay-link').href = SUMUP_PAYMENT_URL;
 
     // Fee breakdown — entries + t-shirts
+    // Count adults vs. children from the participant categories collected in the form.
+    // "Young person (16–17)" is treated as a child rate here — change CHILD_CATEGORIES
+    // below if you'd rather charge them as adults.
+    const CHILD_CATEGORIES = ['Child (under 16)', 'Young person (16–17)'];
+    let adults = 0, children = 0;
+    data.participants.forEach(p => {
+      if (CHILD_CATEGORIES.includes(p.category)) children++;
+      else adults++;
+    });
+
     // Family ticket logic — maximise people covered
     // Requires 1-2 adults AND 2-4 children, total ≤ 5
     let familyTicket = false;
     let familyAdults = 0, familyChildren = 0;
     let extraAdults = adults, extraChildren = children;
-    
+
     const eligibleAdults = Math.min(adults, 2);
     const remainingSlots = 5 - eligibleAdults;
     const eligibleChildren = Math.min(children, remainingSlots);
@@ -903,8 +913,6 @@ async function submitForm() {
     const entryTotal = (familyTicket ? FEES.family : 0)
       + (extraAdults * FEES.adult)
       + (extraChildren * FEES.child);
-
-    const entryTotal = (adults * FEES.adult) + (children * FEES.child);
 
     let shirtTotal = 0;
     const shirtLines = [];
