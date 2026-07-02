@@ -678,7 +678,7 @@ const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw7shCV4gDUL8kb
 const SUMUP_PAYMENT_URL = 'https://pay.sumup.com/b2c/QU50ZCYU';
 // e.g. 'https://pay.sumup.com/b2c/XXXXXXXX'
 // Entry fees — adjust to match your actual prices
-const FEES = { adult: 10, child: 5, shirtAdult: 15, shirtKids: 10.50 };
+const FEES = { adult: 10, child: 5, family: 20, shirtAdult: 15, shirtKids: 10.50 };
 // ========================================================
 
 let pCount = 0;
@@ -882,11 +882,28 @@ async function submitForm() {
     document.getElementById('pay-link').href = SUMUP_PAYMENT_URL;
 
     // Fee breakdown — entries + t-shirts
-    let adults = 0, children = 0;
-    data.participants.forEach(p => {
-      if (p.category && p.category.toLowerCase().includes('child')) children++;
-      else adults++;
-    });
+    // Family ticket logic — maximise people covered
+    // Requires 1-2 adults AND 2-4 children, total ≤ 5
+    let familyTicket = false;
+    let familyAdults = 0, familyChildren = 0;
+    let extraAdults = adults, extraChildren = children;
+    
+    const eligibleAdults = Math.min(adults, 2);
+    const remainingSlots = 5 - eligibleAdults;
+    const eligibleChildren = Math.min(children, remainingSlots);
+    
+    if (eligibleAdults >= 1 && eligibleChildren >= 2) {
+      familyTicket = true;
+      familyAdults = eligibleAdults;
+      familyChildren = eligibleChildren;
+      extraAdults = adults - familyAdults;
+      extraChildren = children - familyChildren;
+    }
+    
+    const entryTotal = (familyTicket ? FEES.family : 0)
+      + (extraAdults * FEES.adult)
+      + (extraChildren * FEES.child);
+
     const entryTotal = (adults * FEES.adult) + (children * FEES.child);
 
     let shirtTotal = 0;
@@ -907,16 +924,38 @@ async function submitForm() {
     </tr></thead><tbody>`;
 
     // Entry fees
-    if (adults > 0) {
+    if (familyTicket) {
+      breakdown += `<tr>
+        <td style="padding:5px 8px;color:var(--gray-800)">
+          Family ticket — ${familyAdults} adult${familyAdults > 1 ? 's' : ''} 
+          + ${familyChildren} child${familyChildren > 1 ? 'ren' : ''}
+          <span style="font-size:0.75rem;color:var(--green);font-weight:600"> ✓ Best price applied</span>
+        </td>
+        <td style="padding:5px 8px;text-align:right;font-weight:600;color:var(--gray-800)">£${FEES.family}</td>
+      </tr>`;
+    }
+    if (!familyTicket && adults > 0) {
       breakdown += `<tr>
         <td style="padding:5px 8px;color:var(--gray-800)">Entry — Adult${adults > 1 ? 's' : ''} x${adults} (£${FEES.adult} each)</td>
         <td style="padding:5px 8px;text-align:right;font-weight:600;color:var(--gray-800)">£${adults * FEES.adult}</td>
       </tr>`;
     }
-    if (children > 0) {
+    if (extraAdults > 0) {
+      breakdown += `<tr>
+        <td style="padding:5px 8px;color:var(--gray-800)">Entry — Additional adult${extraAdults > 1 ? 's' : ''} x${extraAdults} (£${FEES.adult} each)</td>
+        <td style="padding:5px 8px;text-align:right;font-weight:600;color:var(--gray-800)">£${extraAdults * FEES.adult}</td>
+      </tr>`;
+    }
+    if (!familyTicket && children > 0) {
       breakdown += `<tr>
         <td style="padding:5px 8px;color:var(--gray-800)">Entry — Child${children > 1 ? 'ren' : ''} x${children} (£${FEES.child} each)</td>
         <td style="padding:5px 8px;text-align:right;font-weight:600;color:var(--gray-800)">£${children * FEES.child}</td>
+      </tr>`;
+    }
+    if (extraChildren > 0) {
+      breakdown += `<tr>
+        <td style="padding:5px 8px;color:var(--gray-800)">Entry — Additional child${extraChildren > 1 ? 'ren' : ''} x${extraChildren} (£${FEES.child} each)</td>
+        <td style="padding:5px 8px;text-align:right;font-weight:600;color:var(--gray-800)">£${extraChildren * FEES.child}</td>
       </tr>`;
     }
 
