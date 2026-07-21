@@ -723,6 +723,17 @@ function participantHTML(n, isFirst) {
         </select>
       </div>
     </div>
+    <div class="field">
+      <label class="check-item" style="margin-bottom:0">
+        <input type="checkbox" class="p-condition-check" onchange="toggleCondition(this)">
+        Pre-existing medical condition we should know about?
+      </label>
+      <div class="p-condition-wrap" style="display:none;margin-top:8px">
+        <label>Details</label>
+        <input type="text" class="p-condition-details" placeholder="e.g. asthma, allergy, epilepsy — brief details">
+        <p class="hint">Shared only with event first-aid/safety organisers.</p>
+      </div>
+    </div>
   </div>`;
 }
 
@@ -750,6 +761,14 @@ function syncLeadName() {
   const leadName = document.getElementById('lead-name').value;
   const p1Name = document.getElementById('p1-name');
   if (p1Name && !p1Name.dataset.edited) p1Name.value = leadName;
+}
+
+function toggleCondition(checkbox) {
+  const wrap = checkbox.closest('.field').querySelector('.p-condition-wrap');
+  wrap.style.display = checkbox.checked ? 'block' : 'none';
+  if (!checkbox.checked) {
+    wrap.querySelector('.p-condition-details').value = '';
+  }
 }
 
 // Mark first participant name as manually edited so sync stops
@@ -806,6 +825,8 @@ function collectData() {
       dob: card.querySelector('.p-dob').value,
       distance: card.querySelector('.p-distance').value,
       category: card.querySelector('.p-category').value,
+      hasCondition: card.querySelector('.p-condition-check').checked,
+      conditionDetails: card.querySelector('.p-condition-details').value.trim(),
       ecName,
       ecPhone,
       ecRelationship,
@@ -841,6 +862,7 @@ function validate(data) {
   for (const p of data.participants) {
     if (!p.name) return `Please enter a name for participant ${p.num}.`;
     if (!p.distance) return `Please select a race distance for ${p.name || 'participant ' + p.num}.`;
+    if (p.hasCondition && !p.conditionDetails) return `Please add brief details for ${p.name || 'participant ' + p.num}'s condition, or untick the box.`;
   }
   if (!document.getElementById('waiver-check').checked) return 'Please agree to the waiver to continue.';
   return null;
