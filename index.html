@@ -948,7 +948,7 @@ async function submitForm() {
         <td style="padding:5px 8px;text-align:right;font-weight:600;color:var(--gray-800)">£${adults * FEES.adult}</td>
       </tr>`;
     }
-    if (extraAdults > 0) {
+    if (familyTicket && extraAdults > 0) {
       breakdown += `<tr>
         <td style="padding:5px 8px;color:var(--gray-800)">Entry — Additional adult${extraAdults > 1 ? 's' : ''} x${extraAdults} (£${FEES.adult} each)</td>
         <td style="padding:5px 8px;text-align:right;font-weight:600;color:var(--gray-800)">£${extraAdults * FEES.adult}</td>
@@ -960,7 +960,7 @@ async function submitForm() {
         <td style="padding:5px 8px;text-align:right;font-weight:600;color:var(--gray-800)">£${children * FEES.child}</td>
       </tr>`;
     }
-    if (extraChildren > 0) {
+    if (familyTicket && extraChildren > 0) {
       breakdown += `<tr>
         <td style="padding:5px 8px;color:var(--gray-800)">Entry — Additional child${extraChildren > 1 ? 'ren' : ''} x${extraChildren} (£${FEES.child} each)</td>
         <td style="padding:5px 8px;text-align:right;font-weight:600;color:var(--gray-800)">£${extraChildren * FEES.child}</td>
